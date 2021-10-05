@@ -35,7 +35,7 @@ Afterwards you can choose a decompressor routine in assembly Z80, according to
 your requirements for speed and size:
 
 * "Standard" routine: 88 bytes only
-* "Turbo" routine: _coming soon_
+* "Turbo" routine: 158 bytes, about 16% faster
 
 Finally compile the chosen decompressor routine and load the compressed file
 somewhere in memory. To decompress data, just call the routine specifying the

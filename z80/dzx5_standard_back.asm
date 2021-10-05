@@ -15,7 +15,7 @@ dzx5sb_literals:
         call    dzx5sb_elias            ; obtain length
         lddr                            ; copy literals
         inc     c
-        add     a, a                    ; copy from last offset or new offset?
+        add     a, a                    ; copy from last offset or another offset?
         jr      c, dzx5sb_other_offset
 dzx5sb_last_offset:
         call    dzx5sb_elias            ; obtain length
@@ -27,10 +27,10 @@ dzx5sb_copy:
         inc     c
         pop     hl                      ; restore offset
         ex      (sp), hl                ; preserve offset, restore source
-        add     a, a                    ; copy from literals or new offset?
+        add     a, a                    ; copy from literals or another offset?
         jr      nc, dzx5sb_literals
 dzx5sb_other_offset:
-        add     a, a
+        add     a, a                    ; copy from previous offset or new offset?
         jr      nz, dzx5sb_other_offset_skip
         ld      a, (hl)                 ; load another group of 8 bits
         dec     hl
@@ -61,7 +61,7 @@ dzx5sb_new_offset:
         inc     bc
         jr      dzx5sb_copy
 dzx5sb_prev_offset:
-        add     a, a
+        add     a, a                    ; copy from 2nd offset or 3rd offset?
         jr      nc, dzx5sb_second_offset
         ex      de, hl
 dzx5sb_second_offset:
