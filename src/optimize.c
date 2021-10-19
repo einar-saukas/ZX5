@@ -62,7 +62,7 @@ int prepare_cell(CELL *cell, int bits, int index) {
         cell->index = index;
         return TRUE;
     }
-    if (cell->bits > bits || cell->index != index) {
+    if (cell->index != index || cell->bits > bits) {
         cell->bits = bits;
         cell->index = index;
         erase_table(cell);
@@ -140,7 +140,7 @@ int add_previous_offset_block(CELL *dest, int index, int offset, CELL *src) {
     int bits = src->bits + 3 + elias_gamma_bits(length);
     int found = FALSE;
 
-    if (!dest->bits || dest->index != index || bits <= dest->bits)
+    if (!dest->bits || dest->index != index || dest->bits >= bits)
         for (i = 0; i < HASH_SIZE; i++)
             for (entry_src = src->table[i]; entry_src; entry_src = entry_src->next != src->table[i] ? entry_src->next : NULL)
                 if (entry_src->offset2 == offset || entry_src->offset3 == offset) {
@@ -253,6 +253,7 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_
             }
         }
 
+        /* identify optimal choice so far */
         for (offset = 1; offset <= max_offset; offset++) {
             if (last_match[offset].bits == optimal_bits && last_match[offset].index == index) {
                 merge_blocks(&optimal[index], &last_match[offset]);
@@ -261,6 +262,7 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_
             }
         }
 
+        /* indicate progress */
         if (index*MAX_SCALE/input_size > dots) {
             printf(".");
             fflush(stdout);

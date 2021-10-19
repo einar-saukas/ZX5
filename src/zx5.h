@@ -61,17 +61,6 @@ ENTRY *allocate_entry(int offset1, int offset2, int offset3);
 
 void free_list_entries(ENTRY *list);
 
-/* -------------------------- */
-
-
-
-
-
-
-
-
-/* -------------------------- */
-
 BLOCK *optimize(unsigned char *input_data, int input_size, int skip, int offset_limit);
 
 unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_size, int skip, int backwards_mode, int invert_mode, int *output_size, int *delta);

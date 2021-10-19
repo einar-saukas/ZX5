@@ -39,7 +39,7 @@ int skip_next;
 void read_bytes(int n, int *delta) {
     input_index += n;
     diff += n;
-    if (diff > *delta)
+    if (*delta < diff)
         *delta = diff;
 }
 
@@ -85,16 +85,12 @@ unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_siz
     int i;
 
     /* calculate and allocate output buffer */
-    *output_size = (optimal->bits+20+7)/8;
+    *output_size = (optimal->bits+27)/8;
     output_data = (unsigned char *)malloc(*output_size);
     if (!output_data) {
          fprintf(stderr, "Error: Insufficient memory\n");
          exit(1);
     }
-
-    /* initialize delta */
-    diff = *output_size-input_size+skip;
-    *delta = 0;
 
     /* un-reverse optimal sequence */
     prev = NULL;
@@ -105,11 +101,15 @@ unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_siz
         optimal = next;
     }
 
+    /* initialize data */
+    diff = *output_size-input_size+skip;
+    *delta = 0;
     input_index = skip;
     output_index = 0;
     bit_mask = 0;
     skip_next = TRUE;
 
+    /* generate output */
     for (optimal = prev->chain; optimal; optimal = optimal->chain) {
         if (!optimal->offset) {
             /* copy literals indicator */
@@ -136,7 +136,7 @@ unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_siz
             write_bit(0);
             write_bit(0);
 
-            /* copy from last offset length */
+            /* copy from 2nd last offset length */
             write_interlaced_elias_gamma(optimal->length, backwards_mode, FALSE);
             read_bytes(optimal->length, delta);
 
@@ -148,7 +148,7 @@ unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_siz
             write_bit(0);
             write_bit(1);
 
-            /* copy from last offset length */
+            /* copy from 3rd last offset length */
             write_interlaced_elias_gamma(optimal->length, backwards_mode, FALSE);
             read_bytes(optimal->length, delta);
 
@@ -159,7 +159,7 @@ unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_siz
             /* copy from new offset indicator */
             write_bit(1);
             write_bit(1);
-            write_bit(optimal->length > 2 ? backwards_mode : !backwards_mode);
+            write_bit((optimal->length > 2) == backwards_mode);
 
             /* copy from new offset MSB */
             write_interlaced_elias_gamma((optimal->offset-1)/256+1, backwards_mode, invert_mode);
@@ -187,5 +187,6 @@ unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_siz
     write_bit(0);
     write_interlaced_elias_gamma(256, backwards_mode, invert_mode);
 
+    /* done! */
     return output_data;
 }
