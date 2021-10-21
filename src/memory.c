@@ -72,9 +72,8 @@ void assign_block(BLOCK **ptr, BLOCK *chain) {
     if (chain)
         chain->references++;
     if (last && !--last->references) {
-        while (last->chain && !--last->chain->references) {
+        while (last->chain && !--last->chain->references) 
             last = last->chain;
-        }
         last->chain = ghost_root_block;
         ghost_root_block = *ptr;
     }

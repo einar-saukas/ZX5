@@ -236,13 +236,11 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_
                         optimal_bits = last_match[offset].bits;
                 }
                 /* copy from another offset */
-                for (length = 1; length <= index-offset+1 && input_data[index-length+1] == input_data[index-length-offset+1]; length++) {
+                for (length = 1; length <= index-offset+1 && input_data[index-length+1] == input_data[index-length-offset+1]; length++)
                     if (add_previous_offset_block(&last_match[offset], index, offset, &optimal[index-length]) ||
-                        (length > 1 && add_new_offset_block(&last_match[offset], index, offset, &optimal[index-length]))) {
+                        (length > 1 && add_new_offset_block(&last_match[offset], index, offset, &optimal[index-length]))) 
                         if (optimal_bits > last_match[offset].bits)
                             optimal_bits = last_match[offset].bits;
-                    }
-                }
             } else {
                 /* copy literals */
                 if (last_match[offset].bits) {
@@ -254,13 +252,11 @@ BLOCK* optimize(unsigned char *input_data, int input_size, int skip, int offset_
         }
 
         /* identify optimal choice so far */
-        for (offset = 1; offset <= max_offset; offset++) {
-            if (last_match[offset].bits == optimal_bits && last_match[offset].index == index) {
+        for (offset = 1; offset <= max_offset; offset++)
+            if (last_match[offset].bits == optimal_bits && last_match[offset].index == index)
                 merge_blocks(&optimal[index], &last_match[offset]);
-            } else if (last_literal[offset].bits == optimal_bits && last_literal[offset].index == index) {
+            else if (last_literal[offset].bits == optimal_bits && last_literal[offset].index == index)
                 merge_blocks(&optimal[index], &last_literal[offset]);
-            }
-        }
 
         /* indicate progress */
         if (index*MAX_SCALE/input_size > dots) {

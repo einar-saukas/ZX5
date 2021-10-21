@@ -373,5 +373,5 @@ used **ZX5**.
 * [ZX0](https://github.com/einar-saukas/ZX0) - The original compressor on
 which **ZX5** is based.
 
-* [ZX5-Kotlin](https://github.com/einar-saukas/ZX5-Kotlin) - Faster multi-thread
-**ZX5** data compressor in Kotlin.
+* [ZX5-Kotlin](https://github.com/einar-saukas/ZX5-Kotlin) - Faster 
+multi-thread **ZX5** data compressor in Kotlin.

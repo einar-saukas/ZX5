@@ -168,7 +168,7 @@ unsigned char *compress(BLOCK *optimal, unsigned char *input_data, int input_siz
             if (backwards_mode)
                 write_byte((optimal->offset-1)%256);
             else
-                write_byte(255-((optimal->offset-1)%256));
+                write_byte(255-(optimal->offset-1)%256);
 
             /* copy from new offset length */
             skip_next = TRUE;

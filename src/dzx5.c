@@ -55,10 +55,10 @@ int read_bit() {
     return bit_value & bit_mask ? 1 : 0;
 }
 
-int read_interlaced_elias_gamma(int initial) {
-    int value = initial;
+int read_interlaced_elias_gamma(int inverted) {
+    int value = 1;
     while (!read_bit()) {
-        value = value << 1 | read_bit();
+        value = value << 1 | read_bit() ^ inverted;
     }
     return value;
 }
@@ -117,14 +117,14 @@ void decompress(int classic_mode) {
     backtrack = FALSE;
 
 COPY_LITERALS:
-    length = read_interlaced_elias_gamma(1);
+    length = read_interlaced_elias_gamma(FALSE);
     for (i = 0; i < length; i++)
         write_byte(read_byte());
     if (read_bit())
         goto COPY_FROM_OTHER_OFFSET;
 
 /*COPY_FROM_LAST_OFFSET:*/
-    length = read_interlaced_elias_gamma(1);
+    length = read_interlaced_elias_gamma(FALSE);
     write_bytes(last_offset1, length);
     if (!read_bit())
         goto COPY_LITERALS;
@@ -143,7 +143,7 @@ COPY_FROM_OTHER_OFFSET:
             last_offset2 = last_offset1;
             last_offset1 = i;
         }
-        length = read_interlaced_elias_gamma(1);
+        length = read_interlaced_elias_gamma(FALSE);
         write_bytes(last_offset1, length);
     } else {
 
@@ -151,7 +151,7 @@ COPY_FROM_OTHER_OFFSET:
         ahead_bit = read_bit();
         last_offset3 = last_offset2;
         last_offset2 = last_offset1;
-        last_offset1 = classic_mode ? read_interlaced_elias_gamma(1) : (read_interlaced_elias_gamma(254)&255)+1;
+        last_offset1 = read_interlaced_elias_gamma(!classic_mode);
         if (last_offset1 == 256) {
             save_output();
             if (input_index != partial_counter) {
@@ -160,9 +160,9 @@ COPY_FROM_OTHER_OFFSET:
             }
             return;
         }
-        last_offset1 = ((classic_mode ? last_offset1-1 : 255-last_offset1)<<8)+256-read_byte();
+        last_offset1 = last_offset1*256-read_byte();
         backtrack = TRUE;
-        length = read_interlaced_elias_gamma(1)+1;
+        length = read_interlaced_elias_gamma(FALSE)+1;
         write_bytes(last_offset1, length);
     }
     if (read_bit())
