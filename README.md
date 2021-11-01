@@ -370,8 +370,18 @@ used **ZX5**.
 
 ## Links
 
+**ZX5** implemented in other programming languages:
+
+* [ZX5-Kotlin](https://github.com/einar-saukas/ZX5-Kotlin) - Faster
+multi-thread **ZX5** data compressor in Kotlin.
+
+**ZX5** ported to other platforms:
+
+* [Intel 8080](https://github.com/ivagorRetrocomp/DeZX) _(new file format v2)_
+
+* [MOS 6502](https://xxl.atari.pl/zx5-decompressor/) (stream) - _(all formats)_
+
+Related projects (by the same author):
+
 * [ZX0](https://github.com/einar-saukas/ZX0) - The original compressor on
 which **ZX5** is based.
-
-* [ZX5-Kotlin](https://github.com/einar-saukas/ZX5-Kotlin) - Faster 
-multi-thread **ZX5** data compressor in Kotlin.
